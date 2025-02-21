@@ -17,16 +17,14 @@ jobs:
           push: true
           tags: rahman303/timeoff-app:latest
       - name: Deploy to EC2
-        uses: appleseedint/action-ssh@v1
-        env:
-          DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
-          DOCKER_HUB_TOKEN: ${{ secrets.DOCKER_HUB_TOKEN }}
-          EC2_SSH_KEY: ${{ secrets.EC2_SSH_KEY }}
-        with:
-          host: 52.66.245.0
-          username: ubuntu
-          script: |
-            docker stop timeoff-app || true
-            docker rm timeoff-app || true
-            docker pull rahman303/timeoff-app:latest
-            docker run -d -p 3000:3000 --name timeoff-app rahman303/timeoff-app:latest
+  uses: appleboy/ssh-action@v0.1.10
+  with:
+    host: ${{ secrets.EC2_HOST }}
+    username: ubuntu
+    key: ${{ secrets.EC2_SSH_KEY }}
+    script: |
+      docker stop timeoff-app || true
+      docker rm timeoff-app || true
+      docker pull rahman303/timeoff-app:latest
+      docker run -d -p 3000:3000 --name timeoff-app rahman303/timeoff-app:latest
+
