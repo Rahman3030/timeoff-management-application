@@ -14,29 +14,24 @@
 # 4. Login to running container (to update config (vi config/app.json): 
 #	docker exec -ti --user root alpine_timeoff /bin/sh
 # --------------------------------------------------------------------
-FROM alpine:latest as dependencies
+FROM node:14-bullseye-slim
+# Install system dependencies
+RUN apt-get update && apt-get install -y python3 build-essential libsqlite3-dev
 
-RUN apk add --no-cache \
-    nodejs npm 
+# Set Python 3 for node-gyp
+RUN npm config set python python3
 
-COPY package.json  .
-RUN npm install 
-
-FROM alpine:latest
-
-LABEL org.label-schema.schema-version="1.0"
-LABEL org.label-schema.docker.cmd="docker run -d -p 3000:3000 --name alpine_timeoff"
-
-RUN apk add --no-cache \
-    nodejs npm \
-    vim
-
-RUN adduser --system app --home /app
-USER app
+# Create app directory
 WORKDIR /app
-COPY . /app
-COPY --from=dependencies node_modules ./node_modules
 
-CMD npm start
+# Install app dependencies
+COPY package*.json ./
+RUN npm remove node-sass && npm install node-sass@^6.0.0 --legacy-peer-deps
+RUN npm install --legacy-peer-deps
+
+# Copy app source
+COPY . .
 
 EXPOSE 3000
+CMD ["npm", "start"]
+
