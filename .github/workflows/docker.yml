@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Repository  
+      - name: Checkout Repository
         uses: actions/checkout@v4
 
       - name: Set up Node.js
@@ -30,7 +30,6 @@ jobs:
       - name: Build and Push Docker Image
         uses: docker/build-push-action@v5
         with:
-          context: .
           push: true
           tags: rahman303/timeoff-app:latest
 
@@ -41,6 +40,11 @@ jobs:
           username: ubuntu
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
+            # Ensure user has Docker permissions
+            sudo usermod -aG docker ubuntu
+            newgrp docker
+
+            # Pull and run the container
             docker stop timeoff-app || true
             docker rm timeoff-app || true
             docker pull rahman303/timeoff-app:latest
