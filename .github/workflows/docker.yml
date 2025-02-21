@@ -40,9 +40,14 @@ jobs:
           username: ubuntu
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            # Ensure user has Docker permissions
+            # Restart Docker 
+            sudo systemctl restart docker
+            
+            # Fix Docker socket permissions
+            sudo chmod 666 /var/run/docker.sock
+
+            # Ensure user has Docker access
             sudo usermod -aG docker ubuntu
-            newgrp docker
 
             # Pull and run the container
             docker stop timeoff-app || true
