@@ -1,30 +1,35 @@
 name: Deploy TimeOff App
+
 on:
   push:
     branches:
       - master
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout Repository
         uses: actions/checkout@v4
+
       - name: Set up Docker
         uses: docker/setup-buildx-action@v3
-      - name: Build and Push
+
+      - name: Build and Push Docker Image
         uses: docker/build-push-action@v5
         with:
           push: true
           tags: rahman303/timeoff-app:latest
+
       - name: Deploy to EC2
-  uses: appleboy/ssh-action@v0.1.10
-  with:
-    host: ${{ secrets.EC2_HOST }}
-    username: ubuntu
-    key: ${{ secrets.EC2_SSH_KEY }}
-    script: |
-      docker stop timeoff-app || true
-      docker rm timeoff-app || true
-      docker pull rahman303/timeoff-app:latest
-      docker run -d -p 3000:3000 --name timeoff-app rahman303/timeoff-app:latest
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ubuntu
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            docker stop timeoff-app || true
+            docker rm timeoff-app || true
+            docker pull rahman303/timeoff-app:latest
+            docker run -d -p 3000:3000 --name timeoff-app rahman303/timeoff-app:latest
 
