@@ -159,3 +159,4 @@ Please report any issues or feedback to <a href="https://twitter.com/FreeTimeOff
 
 Fix deployment
 Fix GitHub Actions
+Testing GitHub Actions CI/CD workflow

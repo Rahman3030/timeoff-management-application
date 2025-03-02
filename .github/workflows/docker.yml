@@ -4,14 +4,15 @@ on:
   push:
     branches:
       - master
+  workflow_dispatch:  # Allows Jenkins to trigger GitHub Actions manually
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
+      - name: Checkout Repository  
+        uses: actions/checkout@v4 
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -40,16 +41,6 @@ jobs:
           username: ubuntu
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            # Restart Docker 
-            sudo systemctl restart docker
-            
-            # Fix Docker socket permissions
-            sudo chmod 666 /var/run/docker.sock
-
-            # Ensure user has Docker access
-            sudo usermod -aG docker ubuntu
-
-            # Pull and run the container
             docker stop timeoff-app || true
             docker rm timeoff-app || true
             docker pull rahman303/timeoff-app:latest
