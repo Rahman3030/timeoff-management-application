@@ -27,6 +27,10 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_TOKEN }}
+      
+      - name: Run Syntax Check
+        run: node -c app.js
+
 
       - name: Build and Push Docker Image
         uses: docker/build-push-action@v5
