@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - master
-  workflow_dispatch:  # Allows Jenkins to trigger GitHub Actions manually
+  workflow_dispatch:  
 
 jobs:
   deploy:
